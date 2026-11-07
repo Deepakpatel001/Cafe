@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Gaming | 1st Luxury PS5 & PC Gaming Cafe in Ulwe, Navi Mumbai</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Space Grotesk"', 'sans-serif'],
+            sans: ['"DM Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            nexus: {
+              black: '#050505',
+              surface: '#0A0A0A',
+              card: '#0D0E15',
+              cyan: '#00e5ff',
+              magenta: '#d800ff',
+              green: '#25d366',
+              amber: '#f59e0b',
+              border: 'rgba(255, 255, 255, 0.1)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #050505;
+      color: #FFFFFF;
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    .scanlines {
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      ), linear-gradient(
+        90deg,
+        rgba(255, 0, 0, 0.03),
+        rgba(0, 255, 0, 0.01),
+        rgba(0, 0, 255, 0.03)
+      );
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+    .glow-cyan {
+      box-shadow: 0 0 25px -5px rgba(0, 229, 255, 0.4);
+    }
+    .glow-magenta {
+      box-shadow: 0 0 25px -5px rgba(216, 0, 255, 0.4);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #252838;
+      border-radius: 999px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printable-invoice, #printable-invoice * {
+        visibility: visible;
+      }
+      #printable-invoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        color: black !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#050505] text-white selection:bg-[#00e5ff] selection:text-black">
+
+  <!-- CRT SCANLINE OVERLAY -->
+  <div class="scanlines fixed inset-0 z-50 pointer-events-none opacity-20"></div>
+
+  <!-- TOP TELEMETRY STRIP & VIEW SWITCHER (CUSTOMER <-> ADMIN) -->
+  <div class="bg-[#030303] border-b border-white/10 px-6 lg:px-12 py-2 flex items-center justify-between text-[11px] font-mono tracking-wider">
+    <div class="flex items-center gap-5 text-white/50">
+      <span class="flex items-center gap-1.5 text-white/80">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#25d366] animate-pulse"></span>
+        OPEN 24/7 · ULWE, NAVI MUMBAI
+      </span>
+      <span class="hidden md:inline">STATIONS: <strong class="text-white">42 ONLINE</strong></span>
+      <span class="hidden md:inline">LATENCY: <strong class="text-[#00e5ff]">≤ 4 MS</strong></span>
+    </div>
+
+    <!-- VIEW TOGGLE: CUSTOMER APP vs ADMIN PANEL -->
+    <div class="flex items-center gap-1 bg-[#0A0A0A] p-0.5 border border-white/20">
+      <button onclick="switchPortal('customer')" id="tab-customer" class="px-3 py-1 bg-[#00e5ff] text-black font-bold uppercase tracking-widest text-[10px] transition">
+        🎮 Gamer Booking Portal
+      </button>
+      <button onclick="switchPortal('admin')" id="tab-admin" class="px-3 py-1 text-white/60 hover:text-white font-bold uppercase tracking-widest text-[10px] transition">
+        ⚡ Staff & Admin Panel
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN HEADER (CUSTOMER / COMMON) -->
+  <header class="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-md border-b border-white/10 px-6 lg:px-12 py-3 flex items-center justify-between">
+    <!-- BRAND LOCKUP -->
+    <div class="flex items-center gap-5 cursor-pointer" onclick="switchPortal('customer'); goToPage(1);">
+      <div>
+        <div class="font-display text-xl lg:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          <span>NEXUS</span>
+          <span class="text-xs px-2 py-0.5 border border-[#00e5ff] text-[#00e5ff] font-mono tracking-widest font-semibold uppercase">
+            GAMING
+          </span>
+        </div>
+        <div class="text-[9px] font-mono tracking-[0.2em] uppercase text-white/40">
+          Luxury PS5 & PC Arena · Ulwe
+        </div>
+      </div>
+    </div>
+
+    <!-- 3-STEP STEPPER (CUSTOMER MODE ONLY) -->
+    <nav id="customer-nav-stepper" class="hidden md:flex items-center gap-2 font-mono text-xs">
+      <button onclick="goToPage(1)" id="step-nav-1" class="flex items-center gap-2 border border-[#00e5ff] bg-[#00e5ff]/10 text-[#00e5ff] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition">
+        <span>[ 01 // RIGS_SLOTS ]</span>
+      </button>
+      <span class="text-white/20">──</span>
+      <button onclick="goToPage(2)" id="step-nav-2" class="flex items-center gap-2 border border-white/10 text-white/50 hover:text-white px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition">
+        <span>[ 02 // GAMES_CART ]</span>
+      </button>
+      <span class="text-white/20">──</span>
+      <button onclick="goToPage(3)" id="step-nav-3" class="flex items-center gap-2 border border-white/10 text-white/50 hover:text-white px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition">
+        <span>[ 03 // DETAILED_BILL_UPI ]</span>
+      </button>
+    </nav>
+
+    <!-- ADMIN BADGE (WHEN IN ADMIN MODE) -->
+    <div id="admin-header-title" class="hidden items-center gap-2 font-mono text-xs text-amber-400">
+      <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+      <span class="font-bold tracking-widest uppercase">OPERATIONS CONTROL CENTER // ADMIN</span>
+    </div>
+
+    <!-- USER SSO PROFILE -->
+    <div class="flex items-center gap-3 font-mono">
+      <div id="header-pass-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 border border-[#d800ff]/40 bg-[#d800ff]/10 text-[#d800ff] text-[11px] font-semibold">
+        <span>PASS:</span>
+        <strong class="text-white">4H REMAINING</strong>
+      </div>
+
+      <div class="flex items-center gap-2.5 p-1 pr-3 border border-white/20 hover:border-[#00e5ff] transition cursor-pointer">
+        <img class="w-7 h-7 object-cover" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=120&q=80" alt="Avatar">
+        <div class="text-left hidden lg:block leading-tight">
+          <div class="text-xs font-bold text-white">DEEPAK PATEL</div>
+          <div class="text-[9px] text-white/40 font-mono">GOOGLE SSO</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- CUSTOMER PORTAL WRAPPER                                  -->
+  <!-- ======================================================== -->
+  <div id="portal-customer" class="flex-1 flex flex-col">
+
+    <!-- ========================================== -->
+    <!-- PAGE 1: RIG & SLOTS SELECTION              -->
+    <!-- ========================================== -->
+    <main id="page-1" class="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-12 py-8 space-y-8">
+      <div class="border-b border-white/10 pb-6">
+        <div class="text-[11px] font-mono uppercase tracking-[0.24em] text-[#00e5ff] flex items-center gap-2">
+          <span>◆</span> STEP 01 // BATTLE_STATION_ALLOCATION
+        </div>
+        <h1 class="font-display text-4xl lg:text-6xl font-bold leading-[0.95] tracking-tight mt-2 text-white">
+          Select your Battle Station.
+        </h1>
+        <p class="text-white/60 text-sm mt-3 max-w-2xl">
+          Ulwe's premier gaming lounge. High-end RTX 5060 Ti PCs and 24/7 PS5 Elite Lounges. Select 1-hour slots below.
+        </p>
+      </div>
+
+      <!-- DATE BAR -->
+      <div class="flex items-center gap-2 font-mono text-xs">
+        <button class="border border-[#00e5ff] bg-[#00e5ff] text-black px-5 py-2 font-bold uppercase tracking-wider">
+          TODAY // NOV 07
+        </button>
+        <button class="border border-white/20 text-white/70 hover:border-white hover:text-white px-5 py-2 font-medium uppercase tracking-wider transition">
+          TOMORROW // NOV 08
+        </button>
+        <button class="border border-white/20 text-white/70 hover:border-white hover:text-white px-5 py-2 font-medium uppercase tracking-wider transition">
+          SATURDAY // NOV 09
+        </button>
+      </div>
+
+      <!-- 3 STATION CARDS (DEFAULT SELECTED: PS5) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- PS5 ELITE LOUNGE (DEFAULT SELECTED) -->
+        <div id="p1-card-ps5" onclick="selectStation('ps5', 'PS5 ELITE LOUNGE (BOOTH 01)', 250)" class="group relative flex flex-col justify-between p-8 bg-[#0A0A0A] border-2 border-[#00e5ff] glow-cyan cursor-pointer transition-all duration-300">
+          <div class="absolute -top-3.5 right-6 bg-[#00e5ff] text-black text-[10px] font-mono font-bold px-3 py-0.5 uppercase tracking-widest">
+            DEFAULT SELECTED
+          </div>
+          <div>
+            <div class="flex items-start justify-between text-xs font-mono text-white/40">
+              <span>[ 01 // CONSOLE_SUITE ]</span>
+              <span class="text-[#25d366] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#25d366]"></span> 3 BOOTHS READY
+              </span>
+            </div>
+            <h3 class="font-display text-2xl lg:text-3xl font-bold tracking-tight text-white mt-4 group-hover:text-[#00e5ff] transition">
+              PS5 ELITE LOUNGE
+            </h3>
+            <p class="text-white/60 text-xs mt-2 leading-relaxed">
+              Sony 4K 120Hz OLED Display • 1 DualSense Remote Included • Plush Leather Couch • 50+ Games Library.
+            </p>
+
+            <div class="mt-6 pt-4 border-t border-white/10 space-y-1.5 text-[11px] font-mono text-white/70">
+              <div>// HARDWARE: <strong class="text-white">SONY PLAYSTATION 5</strong></div>
+              <div>// DISPLAY: <strong class="text-white">55" BRAVIA 4K 120HZ OLED</strong></div>
+              <div>// AUDIO: <strong class="text-white">DOLBY ATMOS 3D SPATIAL</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-widest text-white/40">RATE</div>
+              <div class="font-display text-2xl font-bold text-white">₹250 <span class="text-xs font-mono text-white/50">/ HR</span></div>
+            </div>
+            <span class="text-xs font-mono font-bold text-[#00e5ff]">SELECT ➔</span>
+          </div>
+        </div>
+
+        <!-- PRO PC STATIONS -->
+        <div id="p1-card-pc" onclick="selectStation('pc', 'PRO PC STATIONS (RTX 5060 Ti)', 180)" class="group relative flex flex-col justify-between p-8 bg-[#0A0A0A] border border-white/10 hover:border-white/30 cursor-pointer transition-all duration-300">
+          <div>
+            <div class="flex items-start justify-between text-xs font-mono text-white/40">
+              <span>[ 02 // PRO_ESPORTS ]</span>
+              <span class="text-[#25d366] font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#25d366]"></span> 8 RIGS READY
+              </span>
+            </div>
+            <h3 class="font-display text-2xl lg:text-3xl font-bold tracking-tight text-white mt-4 group-hover:text-[#00e5ff] transition">
+              PRO PC STATIONS
+            </h3>
+            <p class="text-white/60 text-xs mt-2 leading-relaxed">
+              Ultra-fast esports machines optimized for Valorant, CS2, and Apex at sustained 240+ FPS.
+            </p>
+
+            <div class="mt-6 pt-4 border-t border-white/10 space-y-1.5 text-[11px] font-mono text-white/70">
+              <div>// GPU: <strong class="text-white">NVIDIA RTX 5060 Ti</strong></div>
+              <div>// CPU: <strong class="text-white">AMD RYZEN 5 7500F</strong></div>
+              <div>// SCREEN: <strong class="text-white">240HZ 1MS FAST IPS</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-widest text-white/40">RATE</div>
+              <div class="font-display text-2xl font-bold text-white">₹180 <span class="text-xs font-mono text-white/50">/ HR</span></div>
+            </div>
+            <span class="text-xs font-mono font-bold text-white/40 group-hover:text-[#00e5ff]">SELECT ➔</span>
+          </div>
+        </div>
+
+        <!-- PRIVATE SUITES -->
+        <div id="p1-card-sim" onclick="selectStation('sim', 'PRIVATE SUITES (VIP 01)', 350)" class="group relative flex flex-col justify-between p-8 bg-[#0A0A0A] border border-white/10 hover:border-white/30 cursor-pointer transition-all duration-300">
+          <div>
+            <div class="flex items-start justify-between text-xs font-mono text-white/40">
+              <span>[ 03 // VIP_ROOM ]</span>
+              <span class="text-amber-400 font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> 1 ROOM LEFT
+              </span>
+            </div>
+            <h3 class="font-display text-2xl lg:text-3xl font-bold tracking-tight text-white mt-4 group-hover:text-[#00e5ff] transition">
+              PRIVATE SUITES
+            </h3>
+            <p class="text-white/60 text-xs mt-2 leading-relaxed">
+              Soundproof luxury suite with Dual PS5 consoles, racing cockpit, 75" screen, and party seating.
+            </p>
+
+            <div class="mt-6 pt-4 border-t border-white/10 space-y-1.5 text-[11px] font-mono text-white/70">
+              <div>// CAPACITY: <strong class="text-white">4 - 8 PLAYERS</strong></div>
+              <div>// SIM RIG: <strong class="text-white">FANATEC DIRECT DRIVE</strong></div>
+              <div>// AUDIO: <strong class="text-white">PRIVATE 5.1 THEATRE</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] font-mono uppercase tracking-widest text-white/40">RATE</div>
+              <div class="font-display text-2xl font-bold text-white">₹350 <span class="text-xs font-mono text-white/50">/ HR</span></div>
+            </div>
+            <span class="text-xs font-mono font-bold text-white/40 group-hover:text-[#00e5ff]">SELECT ➔</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1-HOUR SLOTS GRID -->
+      <div class="space-y-4 pt-4 border-t border-white/10">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="text-[11px] font-mono uppercase tracking-[0.24em] text-[#00e5ff]">
+              ◆ TIME_SLOTS // MINIMUM 1 HOUR
+            </div>
+            <h2 class="font-display text-2xl font-bold text-white mt-1">Available 1-Hour Blocks</h2>
+          </div>
+          <div class="flex items-center gap-4 text-xs font-mono text-white/60">
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-[#0D0E15] border border-white/20"></span> AVAILABLE</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-[#00e5ff]"></span> SELECTED</span>
+            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-red-950/80 border border-red-500/30"></span> BOOKED</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3" id="p1-slots-container">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- PAGE 2: CART, GAMES, GUESTS & DRINKS      -->
+    <!-- ========================================== -->
+    <main id="page-2" class="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-12 py-8 space-y-8 hidden">
+      <div class="border-b border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="text-[11px] font-mono uppercase tracking-[0.24em] text-[#00e5ff] flex items-center gap-2">
+            <span>◆</span> STEP 02 // RIG_CUSTOMIZATION_&_GAMES
+          </div>
+          <h1 class="font-display text-4xl lg:text-5xl font-bold leading-tight mt-1 text-white">
+            Configure Controllers, Games & Refreshments.
+          </h1>
+          <p class="text-white/60 text-sm mt-2 max-w-xl">
+            Choose pre-installed titles, allocate guest remotes, and add chilled drinks for your arrival.
+          </p>
+        </div>
+
+        <div class="border border-[#00e5ff]/40 bg-[#00e5ff]/5 px-5 py-3 font-mono text-xs">
+          <div class="text-[#00e5ff] font-bold" id="p2-selected-summary">PS5 ELITE LOUNGE // 2 HOURS</div>
+          <div class="text-white/60 mt-0.5" id="p2-selected-time">15:00 - 17:00 · TODAY, NOV 07</div>
+        </div>
+      </div>
+
+      <!-- DUALSENSE REMOTES CONFIGURATION -->
+      <section class="p-8 bg-[#0A0A0A] border border-white/10 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-[#00e5ff]">
+              // DUALSENSE_CONTROLLER_ALLOCATION
+            </div>
+            <h2 class="font-display text-2xl font-bold text-white mt-1">Number of Players & Remotes</h2>
+            <p class="text-white/60 text-xs mt-1">
+              1 DualSense Remote is included free with the lounge. Extra remotes are charged at <strong class="text-white">₹50 each</strong>.
+            </p>
+          </div>
+          <div class="font-mono text-xs text-[#00e5ff] border border-[#00e5ff]/40 bg-[#00e5ff]/10 px-3.5 py-1.5 font-bold" id="p2-remote-badge">
+            2 REMOTES SELECTED (+₹50)
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+          <button onclick="setPlayerCount(1)" id="guest-btn-1" class="p-4 border border-white/10 text-left hover:border-white/30 transition">
+            <div class="font-mono text-xs text-white/50">01 // SOLO</div>
+            <div class="font-display text-lg font-bold text-white mt-1">1 Player</div>
+            <div class="text-xs text-white/60 mt-0.5">1 Remote Included</div>
+            <div class="text-xs font-mono text-[#25d366] font-bold mt-2">₹0 EXTRA</div>
+          </button>
+
+          <button onclick="setPlayerCount(2)" id="guest-btn-2" class="p-4 border-2 border-[#00e5ff] bg-[#00e5ff]/10 text-left transition glow-cyan">
+            <div class="font-mono text-xs text-[#00e5ff]">02 // DUO</div>
+            <div class="font-display text-lg font-bold text-white mt-1">2 Players</div>
+            <div class="text-xs text-white/80 mt-0.5">2 Remotes Prepped</div>
+            <div class="text-xs font-mono text-[#00e5ff] font-bold mt-2">+₹50 REMOTE FEE</div>
+          </button>
+
+          <button onclick="setPlayerCount(3)" id="guest-btn-3" class="p-4 border border-white/10 text-left hover:border-white/30 transition">
+            <div class="font-mono text-xs text-white/50">03 // TRIO</div>
+            <div class="font-display text-lg font-bold text-white mt-1">3 Players</div>
+            <div class="text-xs text-white/60 mt-0.5">3 Remotes Prepped</div>
+            <div class="text-xs font-mono text-white font-bold mt-2">+₹100 REMOTE FEE</div>
+          </button>
+
+          <button onclick="setPlayerCount(4)" id="guest-btn-4" class="p-4 border border-white/10 text-left hover:border-white/30 transition">
+            <div class="font-mono text-xs text-white/50">04 // SQUAD</div>
+            <div class="font-display text-lg font-bold text-white mt-1">4 Players</div>
+            <div class="text-xs text-white/60 mt-0.5">4 Remotes Prepped</div>
+            <div class="text-xs font-mono text-white font-bold mt-2">+₹150 REMOTE FEE</div>
+          </button>
+        </div>
+      </section>
+
+      <!-- AVAILABLE GAMES CATALOG -->
+      <section class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-[#00e5ff]">
+              // AVAILABLE_PS5_GAMES_LIBRARY
+            </div>
+            <h2 class="font-display text-2xl font-bold text-white mt-1">Select Games for Your Session</h2>
+            <p class="text-white/60 text-xs">Selected games will be pre-updated and ready on your console.</p>
+          </div>
+          <div class="text-xs font-mono text-white/70" id="p2-games-count-label">2 TITLES SELECTED</div>
+        </div>
+
+        <!-- PERSONAL PSN ACCOUNT LOGIN -->
+        <div class="p-5 bg-[#0D0E15] border border-[#d800ff]/40 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 border border-[#d800ff] bg-[#d800ff]/20 text-[#d800ff] flex items-center justify-center font-bold font-mono">
+              PSN
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-white font-mono">// PERSONAL PLAYSTATION ACCOUNT LOGIN</div>
+              <div class="text-xs text-white/60 mt-0.5">Log in with your personal PSN credentials to access cloud saves, own games & trophies.</div>
+            </div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="personal-psn-toggle" onchange="togglePersonalPSN()" class="sr-only peer">
+            <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#d800ff]"></div>
+          </label>
+        </div>
+
+        <!-- GAMES GRID -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4" id="p2-games-container">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- BEVERAGES & SNACKS -->
+      <section class="p-8 bg-[#0A0A0A] border border-white/10 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-[#00e5ff]">
+              // CAFE_BAR_REFRESHMENTS
+            </div>
+            <h2 class="font-display text-2xl font-bold text-white mt-1">Beverages & Energy Drinks</h2>
+            <p class="text-white/60 text-xs">Pre-order for chilled arrival, or order on-demand directly from your couch during gameplay.</p>
+          </div>
+          <span class="text-xs font-mono text-[#25d366]">DELIVERED DIRECT TO STATION</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="p2-snacks-container">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 3: REVIEW, FULL ITEMIZED BILL & UPI SETTLEMENT      -->
+    <!-- ======================================================== -->
+    <main id="page-3" class="flex-1 max-w-5xl mx-auto w-full px-6 lg:px-12 py-8 space-y-8 hidden">
+      <div class="border-b border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="text-[11px] font-mono uppercase tracking-[0.24em] text-[#00e5ff] flex items-center gap-2">
+            <span>◆</span> STEP 03 // DETAILED_INVOICE_&_UPI_SETTLEMENT
+          </div>
+          <h1 class="font-display text-4xl lg:text-5xl font-bold leading-tight mt-1 text-white">
+            Booking Invoice & UPI Payment.
+          </h1>
+          <p class="text-white/60 text-sm mt-2 max-w-xl">
+            Pass hours cover the station time. Additional remotes & refreshments are settled via instant UPI.
+          </p>
+        </div>
+        <button onclick="openPrintableBill()" class="px-4 py-2 border border-white/20 hover:border-[#00e5ff] text-xs font-mono text-white flex items-center gap-2 transition">
+          <span>🖨️ VIEW FULL DETAILED BILL</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <!-- LEFT: COMPLETE ITEMIZED BILL (7 COLS) -->
+        <div class="lg:col-span-7 space-y-6">
+
+          <!-- PASS REDEMPTION CARD -->
+          <div class="p-6 bg-[#0D0E15] border-2 border-[#d800ff] space-y-3 glow-magenta">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 border border-[#d800ff] bg-[#d800ff]/20 text-[#d800ff] flex items-center justify-center font-bold text-lg">
+                  🎟️
+                </div>
+                <div>
+                  <div class="font-display text-base font-bold text-white">Apply 10-Hour Pass (4 Hours Left)</div>
+                  <div class="text-xs font-mono text-[#d800ff]">Deduct 2 Hours for this Session</div>
+                </div>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="p3-pass-toggle" onchange="togglePass()" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#d800ff]"></div>
+              </label>
+            </div>
+            <div class="text-[11px] font-mono text-white/50 pt-2 border-t border-white/10">
+              // RULE: Pass covers station time only (2h = ₹500 waived). Extra remote fees & cafe refreshments remain payable.
+            </div>
+          </div>
+
+          <!-- ITEMIZED INVOICE CARD (WITH EVERY DETAIL) -->
+          <div class="p-6 bg-[#0A0A0A] border border-white/10 space-y-4 font-mono text-xs">
+            <div class="flex justify-between items-center pb-3 border-b border-white/10">
+              <span class="text-white/40 uppercase tracking-widest">// OFFICIAL BOOKING INVOICE</span>
+              <span class="text-[#00e5ff] font-bold">INV-NX-2026-9912</span>
+            </div>
+
+            <!-- DATE & TIME & RIG -->
+            <div class="space-y-2 border-b border-white/5 pb-3">
+              <div class="flex justify-between">
+                <span class="text-white/50">DATE:</span>
+                <span class="text-white font-bold" id="bill-date-val">SATURDAY, NOV 07, 2026</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-white/50">TIME WINDOW:</span>
+                <span class="text-white font-bold" id="bill-time-val">15:00 - 17:00 (2.0 HOURS)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-white/50">STATION:</span>
+                <span class="text-[#00e5ff] font-bold" id="bill-station-val">PS5 ELITE LOUNGE (BOOTH 01)</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-white/50">GAMES PRE-LOADED:</span>
+                <span class="text-white font-bold" id="bill-games-val">EA FC 24, TEKKEN 8</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-white/50">ACCOUNT LOGIN:</span>
+                <span class="text-white font-bold" id="bill-login-val">CAFE DEFAULT PROFILE</span>
+              </div>
+            </div>
+
+            <!-- CHARGES BREAKDOWN -->
+            <div class="space-y-2.5 border-b border-white/5 pb-3">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-white font-bold">STATION TIME (2H @ ₹250/HR)</span>
+                  <div id="bill-pass-status-text" class="text-[10px] text-[#d800ff] font-bold">PAID BY PASS: YES (-₹500.00 WAIVED)</div>
+                </div>
+                <div class="text-right">
+                  <span class="text-white font-bold">₹500.00</span>
+                  <div id="bill-pass-waive-num" class="text-[10px] text-[#d800ff]">-₹500.00</div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center" id="bill-remote-row">
+                <div>
+                  <span class="text-white font-bold">EXTRA DUALSENSE REMOTE (1X)</span>
+                  <div class="text-[10px] text-white/40">2 Players Selected (1 included + 1 extra)</div>
+                </div>
+                <span class="text-white font-bold" id="bill-remote-charge">₹50.00</span>
+              </div>
+
+              <!-- ITEMIZED DRINKS & SNACKS -->
+              <div id="bill-drinks-container" class="space-y-1.5 pt-1">
+                <!-- Injected itemized drinks -->
+              </div>
+            </div>
+
+            <!-- TOTALS -->
+            <div class="pt-2 space-y-1.5">
+              <div class="flex justify-between text-white/50">
+                <span>SUBTOTAL (BEFORE PASS):</span>
+                <span id="bill-gross-total">₹550.00</span>
+              </div>
+              <div class="flex justify-between text-[#d800ff]" id="bill-pass-discount-row">
+                <span>PASS TIME DEDUCTION (2.0H):</span>
+                <span id="bill-pass-deduction">-₹500.00</span>
+              </div>
+              <div class="flex justify-between items-center pt-3 border-t border-white/10 text-sm">
+                <div>
+                  <div class="text-[10px] text-[#00e5ff] font-bold uppercase tracking-wider">NET PAYABLE VIA UPI:</div>
+                  <div class="font-display text-3xl font-bold text-white mt-0.5" id="bill-net-due">₹50.00</div>
+                </div>
+                <div class="text-right text-[10px] text-white/50">
+                  <span>PAYMENT MODE: <strong class="text-white">INSTANT UPI</strong></span><br>
+                  <span>PAID BY PASS: <strong class="text-[#d800ff]" id="bill-pass-badge">YES (2 HOURS)</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: DYNAMIC UPI PAYMENT (5 COLS) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="p-6 bg-[#0A0A0A] border-2 border-[#00e5ff] text-center space-y-4 glow-cyan font-mono">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-[#00e5ff] font-bold">// SCAN_TO_PAY_UPI</span>
+              <span class="text-amber-400">⏱️ 04:48 LOCK</span>
+            </div>
+
+            <!-- DYNAMIC QR -->
+            <div class="w-44 h-44 bg-white p-2.5 mx-auto border-2 border-white relative flex items-center justify-center">
+              <img id="p3-upi-qr" src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=upi://pay?pa=nexusgaming@okhdfcbank&pn=NexusGaming&am=50&cu=INR" alt="UPI QR" class="w-full h-full object-contain">
+              <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span class="bg-white px-2 py-0.5 border border-black text-[9px] font-bold text-blue-700">UPI</span>
+              </div>
+            </div>
+
+            <div class="text-xs space-y-1">
+              <div class="text-white/40">ACCEPTED UPI APPS:</div>
+              <div class="flex items-center justify-center gap-2 pt-1">
+                <span class="border border-white/20 px-2 py-0.5 text-[10px] font-bold text-white">GPAY</span>
+                <span class="border border-[#d800ff]/50 bg-[#d800ff]/10 px-2 py-0.5 text-[10px] font-bold text-[#d800ff]">PHONEPE</span>
+                <span class="border border-sky-500/50 bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-400">PAYTM</span>
+                <span class="border border-orange-500/50 bg-orange-500/10 px-2 py-0.5 text-[10px] font-bold text-orange-400">BHIM</span>
+              </div>
+            </div>
+
+            <div class="pt-1 text-xs">
+              <span class="text-white/50">UPI VPA: </span>
+              <code class="text-[#00e5ff] bg-black px-2 py-1 border border-white/10 font-bold">nexusgaming@okhdfcbank</code>
+            </div>
+
+            <button onclick="confirmBooking()" class="w-full py-4 border border-[#00e5ff] bg-[#00e5ff] text-black font-display font-bold text-sm uppercase tracking-wider hover:bg-white transition shadow-lg shadow-[#00e5ff]/20">
+              I Have Paid (Verify & Issue Ticket)
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FLOATING BOTTOM SUMMARY BAR (CUSTOMER VIEW) -->
+    <div id="bottom-bar" class="fixed bottom-0 inset-x-0 bg-[#040404]/95 backdrop-blur-md border-t border-white/10 py-4 px-6 lg:px-12 z-30 transition transform translate-y-full">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+        <div>
+          <div class="flex items-center gap-3">
+            <span id="bar-station-title" class="font-display text-lg font-bold text-white">PS5 ELITE LOUNGE</span>
+            <span id="bar-hours-pill" class="border border-[#00e5ff] text-[#00e5ff] px-2 py-0.5 text-[10px] font-bold">2 HOURS ALLOCATED</span>
+          </div>
+          <div id="bar-slots-desc" class="text-xs text-white/50 mt-0.5">15:00 - 17:00 · TODAY, NOV 07</div>
+        </div>
+
+        <div class="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+          <div class="text-right">
+            <div class="text-[10px] uppercase text-white/40">ESTIMATED TOTAL</div>
+            <div id="bar-total-amount" class="font-display text-2xl font-bold text-white">₹500</div>
+          </div>
+          <button onclick="nextStep()" class="border border-[#00e5ff] bg-[#00e5ff] text-black px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-white transition flex items-center gap-2">
+            <span id="bar-btn-text">NEXT: CONFIGURE GAMES ➔</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- END CUSTOMER PORTAL -->
+
+  <!-- ======================================================== -->
+  <!-- ADMIN / STAFF OPERATIONS DASHBOARD                       -->
+  <!-- ======================================================== -->
+  <div id="portal-admin" class="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-12 py-8 space-y-8 hidden">
+    <!-- ADMIN TITLE & TELEMETRY -->
+    <div class="border-b border-white/10 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <div class="text-[11px] font-mono uppercase tracking-[0.24em] text-amber-400 flex items-center gap-2">
+          <span>◆</span> OPERATIONS // COMMAND_CENTER
+        </div>
+        <h1 class="font-display text-4xl lg:text-5xl font-bold leading-tight mt-1 text-white">
+          Arena Management & Live Stations.
+        </h1>
+        <p class="text-white/60 text-sm mt-2 max-w-xl">
+          Real-time occupancy tracking, customer station control, F&B delivery tickets, and booking revenue logs.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 font-mono text-xs">
+        <button onclick="alert('Exporting Day Settlement CSV...')" class="px-4 py-2 border border-white/20 hover:border-white text-white">
+          EXPORT CSV
+        </button>
+        <button onclick="alert('Creating manual walk-in booking...')" class="px-4 py-2 border border-[#00e5ff] bg-[#00e5ff] text-black font-bold">
+          + NEW WALK-IN
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 KPI TELEMETRY STATS CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
+      <div class="p-5 bg-[#0A0A0A] border border-white/10 space-y-1">
+        <div class="text-[10px] text-white/40 uppercase tracking-widest">TODAY'S REVENUE</div>
+        <div class="font-display text-3xl font-bold text-white">₹38,450</div>
+        <div class="text-[11px] text-[#25d366] flex items-center gap-1">
+          <span>↑ 18%</span> <span class="text-white/40">vs last Saturday</span>
+        </div>
+      </div>
+
+      <div class="p-5 bg-[#0A0A0A] border border-white/10 space-y-1">
+        <div class="text-[10px] text-white/40 uppercase tracking-widest">ARENA OCCUPANCY</div>
+        <div class="font-display text-3xl font-bold text-[#00e5ff]">34 / 42</div>
+        <div class="text-[11px] text-white/50">81% Peak Capacity (8 Free)</div>
+      </div>
+
+      <div class="p-5 bg-[#0A0A0A] border border-white/10 space-y-1">
+        <div class="text-[10px] text-white/40 uppercase tracking-widest">PASS HOURS REDEEMED</div>
+        <div class="font-display text-3xl font-bold text-[#d800ff]">46.0 HRS</div>
+        <div class="text-[11px] text-[#d800ff]">23 Active Member Passes</div>
+      </div>
+
+      <div class="p-5 bg-[#0A0A0A] border border-white/10 space-y-1">
+        <div class="text-[10px] text-white/40 uppercase tracking-widest">OPEN F&B TICKETS</div>
+        <div class="font-display text-3xl font-bold text-amber-400">4 PENDING</div>
+        <div class="text-[11px] text-amber-400/80">Drinks & snacks in prep</div>
+      </div>
+    </div>
+
+    <!-- LIVE FLOOR GRID: 8 KEY STATIONS PREVIEW -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono uppercase tracking-widest text-[#00e5ff]">// LIVE_STATION_TELEMETRY</div>
+          <h2 class="font-display text-2xl font-bold text-white mt-0.5">Live Arena Station Control</h2>
+        </div>
+        <div class="flex items-center gap-4 font-mono text-xs text-white/50">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-[#25d366]"></span> IN PLAY (34)</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-amber-400"></span> RESERVED (4)</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-white/20"></span> AVAILABLE (8)</span>
+        </div>
+      </div>
+
+      <!-- STATION CARDS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono text-xs">
+        
+        <!-- PS5 BOOTH 01 (DEEPAK PATEL - ACTIVE) -->
+        <div class="p-5 bg-[#0D0E15] border-2 border-[#00e5ff] space-y-3 glow-cyan">
+          <div class="flex justify-between items-start">
+            <span class="font-bold text-white text-sm">PS5-BOOTH-01</span>
+            <span class="px-2 py-0.5 bg-[#25d366]/20 border border-[#25d366] text-[#25d366] text-[9px] font-bold">IN PLAY</span>
+          </div>
+          <div class="space-y-1 text-white/60 text-[11px]">
+            <div>USER: <strong class="text-white">DEEPAK PATEL</strong></div>
+            <div>GAMES: <strong class="text-cyan-300">EA FC 24, TEKKEN 8</strong></div>
+            <div>REMOTES: <strong class="text-white">2 DUALSENSE (DUO)</strong></div>
+            <div>PASS USED: <strong class="text-[#d800ff]">YES (2H DEDUCTED)</strong></div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex justify-between items-center text-[11px]">
+            <span class="text-amber-400 font-bold">⏱️ 01h:44m LEFT</span>
+            <button onclick="alert('Session extended by 1 hour on PS5-01')" class="text-[10px] text-[#00e5ff] hover:underline">+1H EXTEND</button>
+          </div>
+        </div>
+
+        <!-- PS5 BOOTH 02 -->
+        <div class="p-5 bg-[#0D0E15] border border-white/10 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="font-bold text-white text-sm">PS5-BOOTH-02</span>
+            <span class="px-2 py-0.5 bg-[#25d366]/20 border border-[#25d366] text-[#25d366] text-[9px] font-bold">IN PLAY</span>
+          </div>
+          <div class="space-y-1 text-white/60 text-[11px]">
+            <div>USER: <strong class="text-white">ROHAN SHAH</strong></div>
+            <div>GAMES: <strong class="text-cyan-300">SPIDER-MAN 2</strong></div>
+            <div>REMOTES: <strong class="text-white">1 DUALSENSE (SOLO)</strong></div>
+            <div>PASS USED: <strong class="text-white/40">NO (UPI ₹250)</strong></div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex justify-between items-center text-[11px]">
+            <span class="text-amber-400 font-bold">⏱️ 00h:22m LEFT</span>
+            <button class="text-[10px] text-[#00e5ff] hover:underline">+1H EXTEND</button>
+          </div>
+        </div>
+
+        <!-- PRO PC 04 -->
+        <div class="p-5 bg-[#0D0E15] border border-white/10 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="font-bold text-white text-sm">PC-RIG-04 (5060Ti)</span>
+            <span class="px-2 py-0.5 bg-amber-400/20 border border-amber-400 text-amber-400 text-[9px] font-bold">NEXT IN 12M</span>
+          </div>
+          <div class="space-y-1 text-white/60 text-[11px]">
+            <div>RESERVED: <strong class="text-white">SAHIL VERMA</strong></div>
+            <div>SLOT: <strong class="text-white">16:00 - 18:00</strong></div>
+            <div>HARDWARE: <strong class="text-white">240HZ + RAZER</strong></div>
+            <div>UPI STATUS: <strong class="text-[#25d366]">VERIFIED ₹360</strong></div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex justify-between items-center text-[11px]">
+            <span class="text-white/40">READY FOR CHECKIN</span>
+            <button onclick="alert('Rig PC-04 unlocked for Sahil')" class="text-[10px] text-[#25d366] font-bold hover:underline">CHECK-IN</button>
+          </div>
+        </div>
+
+        <!-- PRIVATE VIP SUITE -->
+        <div class="p-5 bg-[#0D0E15] border border-white/10 space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="font-bold text-white text-sm">VIP-SUITE-01</span>
+            <span class="px-2 py-0.5 bg-white/10 border border-white/20 text-white/60 text-[9px] font-bold">AVAILABLE</span>
+          </div>
+          <div class="space-y-1 text-white/60 text-[11px]">
+            <div>CAPACITY: <strong class="text-white">8 PLAYERS</strong></div>
+            <div>RIGS: <strong class="text-white">DUAL PS5 + SIM</strong></div>
+            <div>STATUS: <strong class="text-[#25d366]">CLEANED & READY</strong></div>
+            <div>RATE: <strong class="text-white">₹350 / HR</strong></div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex justify-between items-center text-[11px]">
+            <span class="text-white/40">NO RESERVATIONS</span>
+            <button onclick="alert('Assigning Walk-in to VIP suite')" class="text-[10px] text-[#00e5ff] font-bold hover:underline">+ ASSIGN</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- RECENT BOOKINGS & INVOICES TABLE (FULL DETAILS) -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono uppercase tracking-widest text-[#00e5ff]">// TRANSACTION_AUDIT_LOG</div>
+          <h2 class="font-display text-2xl font-bold text-white mt-0.5">Recent Bookings & Itemized Invoices</h2>
+        </div>
+        <input type="text" placeholder="Search by customer, invoice or station..." class="bg-[#0A0A0A] border border-white/20 px-3.5 py-1.5 text-xs font-mono text-white placeholder-white/30 focus:border-[#00e5ff] outline-none">
+      </div>
+
+      <div class="overflow-x-auto border border-white/10 bg-[#0A0A0A]">
+        <table class="w-full text-left font-mono text-xs">
+          <thead class="bg-[#030303] text-white/40 uppercase tracking-wider text-[10px] border-b border-white/10">
+            <tr>
+              <th class="p-3.5">Invoice #</th>
+              <th class="p-3.5">Customer</th>
+              <th class="p-3.5">Station & Time</th>
+              <th class="p-3.5">Pre-Loaded Games</th>
+              <th class="p-3.5">Remotes</th>
+              <th class="p-3.5">Drinks / F&B</th>
+              <th class="p-3.5">Paid by Pass?</th>
+              <th class="p-3.5">UPI Paid</th>
+              <th class="p-3.5 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5 text-[11px]">
+            <!-- ROW 1 (DEEPAK PATEL) -->
+            <tr class="hover:bg-white/[0.02] transition">
+              <td class="p-3.5 text-[#00e5ff] font-bold">INV-NX-9912</td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">Deepak Patel</div>
+                <div class="text-[10px] text-white/40">deepakpatel970@gmail.com</div>
+              </td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">PS5 Elite Lounge (01)</div>
+                <div class="text-[10px] text-white/40">Today, 15:00 - 17:00 (2h)</div>
+              </td>
+              <td class="p-3.5 text-cyan-300">EA FC 24, Tekken 8</td>
+              <td class="p-3.5">2 Remotes (+₹50)</td>
+              <td class="p-3.5">Red Bull (x1), Fries (x1)</td>
+              <td class="p-3.5">
+                <span class="px-2 py-0.5 bg-[#d800ff]/20 text-[#d800ff] font-bold border border-[#d800ff]/40">
+                  YES (-2H / ₹500)
+                </span>
+              </td>
+              <td class="p-3.5 text-emerald-400 font-bold">₹274.00</td>
+              <td class="p-3.5 text-right">
+                <button onclick="openPrintableBill()" class="px-2.5 py-1 border border-white/20 hover:border-[#00e5ff] text-white text-[10px]">
+                  VIEW BILL
+                </button>
+              </td>
+            </tr>
+
+            <!-- ROW 2 -->
+            <tr class="hover:bg-white/[0.02] transition">
+              <td class="p-3.5 text-white/80 font-bold">INV-NX-9911</td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">Rohan Shah</div>
+                <div class="text-[10px] text-white/40">rohan.s@gmail.com</div>
+              </td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">PS5 Elite Lounge (02)</div>
+                <div class="text-[10px] text-white/40">Today, 14:00 - 15:00 (1h)</div>
+              </td>
+              <td class="p-3.5 text-cyan-300">Marvel Spider-Man 2</td>
+              <td class="p-3.5">1 Remote (Included)</td>
+              <td class="p-3.5">Monster Energy (x1)</td>
+              <td class="p-3.5">
+                <span class="px-2 py-0.5 bg-white/10 text-white/50 border border-white/10">
+                  NO (FULL UPI)
+                </span>
+              </td>
+              <td class="p-3.5 text-emerald-400 font-bold">₹390.00</td>
+              <td class="p-3.5 text-right">
+                <button class="px-2.5 py-1 border border-white/20 hover:border-[#00e5ff] text-white text-[10px]">
+                  VIEW BILL
+                </button>
+              </td>
+            </tr>
+
+            <!-- ROW 3 -->
+            <tr class="hover:bg-white/[0.02] transition">
+              <td class="p-3.5 text-white/80 font-bold">INV-NX-9910</td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">Vikram Malhotra</div>
+                <div class="text-[10px] text-white/40">vikram.m@outlook.com</div>
+              </td>
+              <td class="p-3.5">
+                <div class="text-white font-bold">PC Esports Rig (08)</div>
+                <div class="text-[10px] text-white/40">Today, 12:00 - 15:00 (3h)</div>
+              </td>
+              <td class="p-3.5 text-cyan-300">Valorant, CS2</td>
+              <td class="p-3.5">Keyboard + Mouse</td>
+              <td class="p-3.5">Cold Brew Coffee (x2)</td>
+              <td class="p-3.5">
+                <span class="px-2 py-0.5 bg-[#d800ff]/20 text-[#d800ff] font-bold border border-[#d800ff]/40">
+                  YES (-3H / ₹540)
+                </span>
+              </td>
+              <td class="p-3.5 text-emerald-400 font-bold">₹240.00</td>
+              <td class="p-3.5 text-right">
+                <button class="px-2.5 py-1 border border-white/20 hover:border-[#00e5ff] text-white text-[10px]">
+                  VIEW BILL
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LIVE F&B DELIVERY QUEUE (BAR / KITCHEN ORDERS) -->
+    <section class="p-6 bg-[#0A0A0A] border border-white/10 space-y-4 font-mono">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-[10px] uppercase tracking-widest text-amber-400">// KITCHEN_DISPENSE_QUEUE</div>
+          <h2 class="font-display text-xl font-bold text-white mt-0.5">Live Station Delivery Queue</h2>
+        </div>
+        <span class="text-xs text-amber-400">4 ACTIVE TICKETS</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+        <div class="p-4 bg-[#0D0E15] border border-amber-400/40 space-y-2">
+          <div class="flex justify-between items-start">
+            <span class="text-white font-bold">DELIVER TO: <strong class="text-[#00e5ff]">PS5-01</strong></span>
+            <span class="text-[9px] text-amber-400 font-bold uppercase">PREPARING</span>
+          </div>
+          <div class="text-white/80 text-[11px]">
+            • 1x Red Bull Energy (250ml)<br>
+            • 1x Peri-Peri Crinkle Fries (Extra crispy)
+          </div>
+          <button onclick="this.innerText='SERVED ✓'; this.className='w-full py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold';" class="w-full py-1 border border-amber-400 text-amber-400 text-[10px] font-bold hover:bg-amber-400 hover:text-black transition">
+            MARK DELIVERED
+          </button>
+        </div>
+
+        <div class="p-4 bg-[#0D0E15] border border-white/10 space-y-2">
+          <div class="flex justify-between items-start">
+            <span class="text-white font-bold">DELIVER TO: <strong class="text-[#00e5ff]">PC-12</strong></span>
+            <span class="text-[9px] text-white/50 font-bold uppercase">IN QUEUE</span>
+          </div>
+          <div class="text-white/80 text-[11px]">
+            • 2x Cold Brew Hazelnut Coffee
+          </div>
+          <button onclick="this.innerText='SERVED ✓'; this.className='w-full py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold';" class="w-full py-1 border border-white/20 text-white/70 text-[10px] font-bold hover:bg-white hover:text-black transition">
+            MARK DELIVERED
+          </button>
+        </div>
+
+        <div class="p-4 bg-[#0D0E15] border border-white/10 space-y-2">
+          <div class="flex justify-between items-start">
+            <span class="text-white font-bold">DELIVER TO: <strong class="text-[#00e5ff]">VIP-01</strong></span>
+            <span class="text-[9px] text-white/50 font-bold uppercase">IN QUEUE</span>
+          </div>
+          <div class="text-white/80 text-[11px]">
+            • 4x Monster Energy Ultra<br>
+            • 2x Loaded Cheese Nachos
+          </div>
+          <button onclick="this.innerText='SERVED ✓'; this.className='w-full py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold';" class="w-full py-1 border border-white/20 text-white/70 text-[10px] font-bold hover:bg-white hover:text-black transition">
+            MARK DELIVERED
+          </button>
+        </div>
+
+        <div class="p-4 bg-[#0D0E15] border border-white/10 space-y-2">
+          <div class="flex justify-between items-start">
+            <span class="text-white font-bold">DELIVER TO: <strong class="text-[#00e5ff]">PS5-03</strong></span>
+            <span class="text-[9px] text-white/50 font-bold uppercase">IN QUEUE</span>
+          </div>
+          <div class="text-white/80 text-[11px]">
+            • 1x Peri-Peri Fries
+          </div>
+          <button onclick="this.innerText='SERVED ✓'; this.className='w-full py-1 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold';" class="w-full py-1 border border-white/20 text-white/70 text-[10px] font-bold hover:bg-white hover:text-black transition">
+            MARK DELIVERED
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- END ADMIN PORTAL -->
+
+  <!-- ======================================================== -->
+  <!-- FULL DETAILED BILL & INVOICE MODAL (PRINTABLE)           -->
+  <!-- ======================================================== -->
+  <div id="invoice-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4">
+    <div id="printable-invoice" class="relative w-full max-w-2xl bg-[#0A0A0A] border-2 border-[#00e5ff] p-8 space-y-6 shadow-2xl font-mono text-xs max-h-[95vh] overflow-y-auto custom-scroll">
+      
+      <!-- CLOSE BUTTON -->
+      <button onclick="closeInvoiceModal()" class="absolute top-6 right-6 text-white/40 hover:text-white p-2 text-sm">
+        ✕
+      </button>
+
+      <!-- INVOICE HEADER -->
+      <div class="border-b border-white/10 pb-5 flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div>
+          <div class="font-display text-2xl font-bold text-white flex items-center gap-2">
+            NEXUS <span class="text-xs px-2 py-0.5 border border-[#00e5ff] text-[#00e5ff]">GAMING</span>
+          </div>
+          <div class="text-[11px] text-white/60 mt-1">First Luxury PS5 & PC Gaming Cafe in Ulwe</div>
+          <div class="text-[10px] text-white/40">Plot 14, Sector 19, Ulwe, Navi Mumbai · GSTIN: 27AABCN9912E1Z8</div>
+        </div>
+        <div class="text-right sm:text-right">
+          <div class="text-xs font-bold text-[#00e5ff]">TAX INVOICE / RECEIPT</div>
+          <div class="text-white font-mono font-bold mt-0.5">#INV-NX-9912</div>
+          <div class="text-[10px] text-white/40">DATE: 07-NOV-2026 14:52 IST</div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER & SESSION DETAILS -->
+      <div class="grid grid-cols-2 gap-4 border-b border-white/10 pb-4 text-[11px]">
+        <div>
+          <span class="text-white/40 uppercase">BILLED TO:</span>
+          <div class="text-white font-bold mt-0.5">DEEPAK PATEL</div>
+          <div class="text-white/60">deepakpatel970@gmail.com</div>
+          <div class="text-white/40 text-[10px]">Google SSO Verified</div>
+        </div>
+        <div class="text-right">
+          <span class="text-white/40 uppercase">SESSION SPECS:</span>
+          <div class="text-white font-bold mt-0.5" id="inv-modal-rig">PS5 ELITE LOUNGE (BOOTH 01)</div>
+          <div class="text-[#00e5ff]" id="inv-modal-time">TIME: 15:00 - 17:00 (2.0 HRS)</div>
+          <div class="text-white/60 text-[10px]">DATE: SATURDAY, NOV 07, 2026</div>
+        </div>
+      </div>
+
+      <!-- PRE-LOADED GAMES & PSN LOGIN SPEC -->
+      <div class="p-3 bg-black border border-white/10 text-[11px] space-y-1">
+        <div class="flex justify-between">
+          <span class="text-white/50">PRE-INSTALLED GAMES REQUESTED:</span>
+          <strong class="text-[#00e5ff]" id="inv-modal-games">EA SPORTS FC 24, TEKKEN 8</strong>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-white/50">ACCOUNT LOGIN MODE:</span>
+          <strong class="text-white" id="inv-modal-login">CAFE DEFAULT PROFILE</strong>
+        </div>
+      </div>
+
+      <!-- ITEM TABLE -->
+      <table class="w-full text-left text-[11px] border-collapse">
+        <thead>
+          <tr class="border-b border-white/20 text-white/40 text-[10px] uppercase">
+            <th class="py-2">Item Description</th>
+            <th class="py-2 text-center">Qty / Duration</th>
+            <th class="py-2 text-right">Unit Price</th>
+            <th class="py-2 text-right">Amount (INR)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5" id="inv-modal-items-tbody">
+          <!-- Item rows injected by JS -->
+        </tbody>
+      </table>
+
+      <!-- PASS WAIVER & FINAL SETTLEMENT -->
+      <div class="border-t border-white/20 pt-4 space-y-2">
+        <div class="flex justify-between text-white/60">
+          <span>GROSS TOTAL (BEFORE PASS):</span>
+          <span class="text-white font-bold" id="inv-modal-gross">₹774.00</span>
+        </div>
+
+        <!-- PAID BY PASS STATUS -->
+        <div class="p-3 bg-[#d800ff]/10 border border-[#d800ff]/40 flex justify-between items-center text-[#d800ff]">
+          <div>
+            <strong>PAID BY PASS: YES (10-HOUR PASS)</strong>
+            <div class="text-[10px] text-[#d800ff]/80">2.0 Hours station time waived from account balance.</div>
+          </div>
+          <strong class="text-sm" id="inv-modal-pass-discount">-₹500.00</strong>
+        </div>
+
+        <div class="flex justify-between text-white/60 pt-1">
+          <span>EXTRA REMOTES & REFRESHMENTS DUE:</span>
+          <span class="text-white font-bold" id="inv-modal-net-extras">₹274.00</span>
+        </div>
+
+        <div class="flex justify-between items-center pt-2 border-t border-white/10 text-sm">
+          <div>
+            <div class="text-[10px] uppercase text-[#00e5ff] font-bold">TOTAL PAID VIA INSTANT UPI:</div>
+            <div class="font-display text-3xl font-bold text-white" id="inv-modal-final-upi">₹274.00</div>
+          </div>
+          <div class="text-right text-[10px] text-white/60">
+            <div>TXN ID: <strong class="text-white">UPI/NX/2026/882194</strong></div>
+            <div>STATUS: <strong class="text-[#25d366]">SETTLED & CONFIRMED ✓</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVOICE FOOTER ACTIONS -->
+      <div class="pt-4 border-t border-white/10 flex justify-between items-center">
+        <button onclick="window.print()" class="px-5 py-2.5 bg-white text-black font-bold text-xs hover:bg-[#00e5ff] transition">
+          🖨️ PRINT OFFICIAL INVOICE
+        </button>
+        <button onclick="closeInvoiceModal()" class="px-5 py-2.5 border border-white/20 hover:border-white text-white text-xs">
+          CLOSE
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // STATE
+    // ==========================================
+    let currentPortal = 'customer'; // 'customer' | 'admin'
+    let currentPage = 1; // 1, 2, 3
+    let currentStation = { id: 'ps5', name: 'PS5 ELITE LOUNGE (BOOTH 01)', rate: 250 };
+    let selectedSlots = [15, 16]; // 3 PM & 4 PM (15:00 - 17:00)
+    let playerCount = 2; // 2 players (+1 extra remote = ₹50)
+    let selectedGames = ['fc24', 'tekken8'];
+    let personalPSN = false;
+    let passRedeemed = true;
+
+    let snacks = [
+      { id: 'redbull', name: 'RED BULL ENERGY (250ML)', tag: 'CHILLED CAN', price: 125, qty: 1 },
+      { id: 'monster', name: 'MONSTER ENERGY ULTRA', tag: 'ZERO SUGAR', price: 140, qty: 0 },
+      { id: 'coffee', name: 'COLD BREW HAZELNUT COFFEE', tag: 'SIGNATURE ICED', price: 120, qty: 0 },
+      { id: 'fries', name: 'PERI-PERI CRINKLE FRIES', tag: 'HOT & CRISPY', price: 99, qty: 1 },
+    ];
+
+    const allSlots = [
+      { id: 11, label: '11:00 - 12:00', status: 'available' },
+      { id: 12, label: '12:00 - 13:00', status: 'available' },
+      { id: 13, label: '13:00 - 14:00', status: 'booked' },
+      { id: 14, label: '14:00 - 15:00', status: 'available' },
+      { id: 15, label: '15:00 - 16:00', status: 'available' },
+      { id: 16, label: '16:00 - 17:00', status: 'available' },
+      { id: 17, label: '17:00 - 18:00', status: 'available' },
+      { id: 18, label: '18:00 - 19:00', status: 'available' },
+      { id: 19, label: '19:00 - 20:00', status: 'booked' },
+      { id: 20, label: '20:00 - 21:00', status: 'available' },
+      { id: 21, label: '21:00 - 22:00', status: 'available' },
+      { id: 22, label: '22:00 - 23:00', status: 'available' },
+    ];
+
+    const availableGames = [
+      { id: 'fc24', title: 'EA SPORTS FC 24', genre: 'SPORTS // FOOTBALL', players: '1-4 PLAYERS', cover: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=300&q=80' },
+      { id: 'tekken8', title: 'TEKKEN 8', genre: 'FIGHTING // VERSUS', players: '1-2 PLAYERS', cover: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=300&q=80' },
+      { id: 'mk1', title: 'MORTAL KOMBAT 1', genre: 'FIGHTING', players: '1-2 PLAYERS', cover: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=300&q=80' },
+      { id: 'spiderman2', title: 'MARVEL SPIDER-MAN 2', genre: 'ACTION // ADVENTURE', players: '1 PLAYER', cover: 'https://images.unsplash.com/photo-1612287232128-661ffad202ff?auto=format&fit=crop&w=300&q=80' },
+      { id: 'ittakestwo', title: 'IT TAKES TWO', genre: 'CO-OP ADVENTURE', players: '2 PLAYERS', cover: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=300&q=80' },
+      { id: 'gt7', title: 'GRAN TURISMO 7', genre: 'SIM RACING', players: '1-2 PLAYERS', cover: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=300&q=80' },
+      { id: 'codmw3', title: 'CALL OF DUTY: MW3', genre: 'FPS TACTICAL', players: '1-2 PLAYERS', cover: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=300&q=80' },
+      { id: 'wwe2k24', title: 'WWE 2K24', genre: 'SPORTS // WRESTLING', players: '1-4 PLAYERS', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80' },
+    ];
+
+    // ==========================================
+    // PORTAL SWITCHER: CUSTOMER <-> ADMIN
+    // ==========================================
+    function switchPortal(portal) {
+      currentPortal = portal;
+      const isCust = portal === 'customer';
+      document.getElementById('portal-customer').classList.toggle('hidden', !isCust);
+      document.getElementById('portal-admin').classList.toggle('hidden', isCust);
+
+      document.getElementById('customer-nav-stepper').classList.toggle('hidden', !isCust);
+      document.getElementById('admin-header-title').classList.toggle('hidden', isCust);
+      document.getElementById('admin-header-title').classList.toggle('flex', !isCust);
+
+      const tabCust = document.getElementById('tab-customer');
+      const tabAdm = document.getElementById('tab-admin');
+      if (isCust) {
+        tabCust.className = "px-3 py-1 bg-[#00e5ff] text-black font-bold uppercase tracking-widest text-[10px] transition";
+        tabAdm.className = "px-3 py-1 text-white/60 hover:text-white font-bold uppercase tracking-widest text-[10px] transition";
+      } else {
+        tabAdm.className = "px-3 py-1 bg-amber-400 text-black font-bold uppercase tracking-widest text-[10px] transition";
+        tabCust.className = "px-3 py-1 text-white/60 hover:text-white font-bold uppercase tracking-widest text-[10px] transition";
+      }
+    }
+
+    // ==========================================
+    // STEP NAVIGATION (CUSTOMER PORTAL)
+    // ==========================================
+    function goToPage(page) {
+      currentPage = page;
+      document.getElementById('page-1').classList.toggle('hidden', page !== 1);
+      document.getElementById('page-2').classList.toggle('hidden', page !== 2);
+      document.getElementById('page-3').classList.toggle('hidden', page !== 3);
+
+      [1, 2, 3].forEach(p => {
+        const btn = document.getElementById(`step-nav-${p}`);
+        if (p === page) {
+          btn.className = "flex items-center gap-2 border border-[#00e5ff] bg-[#00e5ff]/10 text-[#00e5ff] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition";
+        } else if (p < page) {
+          btn.className = "flex items-center gap-2 border border-[#25d366]/40 bg-[#25d366]/10 text-[#25d366] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition";
+        } else {
+          btn.className = "flex items-center gap-2 border border-white/10 text-white/50 hover:text-white px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] transition";
+        }
+      });
+
+      const bottomBar = document.getElementById('bottom-bar');
+      if (page === 3) {
+        bottomBar.classList.add('translate-y-full');
+      } else {
+        updateBottomBar();
+      }
+
+      if (page === 2) {
+        renderGames();
+        renderSnacks();
+        document.getElementById('p2-selected-summary').innerText = `${currentStation.name} // ${selectedSlots.length} HOURS`;
+        const firstSlot = allSlots.find(s => s.id === selectedSlots[0]);
+        const lastSlot = allSlots.find(s => s.id === selectedSlots[selectedSlots.length - 1]);
+        const startStr = firstSlot ? firstSlot.label.split('-')[0].trim() : '15:00';
+        const endStr = lastSlot ? lastSlot.label.split('-')[1].trim() : '17:00';
+        document.getElementById('p2-selected-time').innerText = `${startStr}:00 - ${endStr}:00 · TODAY, NOV 07`;
+      }
+
+      if (page === 3) {
+        updatePage3Bill();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function nextStep() {
+      if (currentPage === 1) goToPage(2);
+      else if (currentPage === 2) goToPage(3);
+    }
+
+    // ==========================================
+    // PAGE 1: STATIONS & SLOTS
+    // ==========================================
+    function renderSlots() {
+      const container = document.getElementById('p1-slots-container');
+      container.innerHTML = allSlots.map(slot => {
+        const isSelected = selectedSlots.includes(slot.id);
+        const isBooked = slot.status === 'booked';
+
+        if (isBooked) {
+          return `
+            <div class="p-3.5 bg-[#0D0E15]/50 border border-red-500/20 opacity-30 cursor-not-allowed font-mono flex flex-col justify-between h-24">
+              <span class="text-[9px] uppercase tracking-widest text-red-400 font-bold">LOCKED</span>
+              <span class="text-xs text-white/50">${slot.label}</span>
+            </div>
+          `;
+        }
+
+        if (isSelected) {
+          return `
+            <div onclick="toggleSlot(${slot.id})" class="p-3.5 bg-[#00e5ff] text-black border border-[#00e5ff] font-mono cursor-pointer flex flex-col justify-between h-24 shadow-lg shadow-[#00e5ff]/20">
+              <span class="text-[9px] uppercase tracking-widest font-bold">[ SELECTED ✓ ]</span>
+              <div>
+                <div class="text-sm font-bold">${slot.label}</div>
+                <div class="text-[10px] font-bold">₹${currentStation.rate} / HR</div>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div onclick="toggleSlot(${slot.id})" class="p-3.5 bg-[#0A0A0A] border border-white/10 hover:border-[#00e5ff] cursor-pointer font-mono flex flex-col justify-between h-24 transition">
+            <span class="text-[9px] uppercase tracking-widest text-white/40">1-HR SLOT</span>
+            <div>
+              <div class="text-sm font-bold text-white">${slot.label}</div>
+              <div class="text-[10px] text-[#00e5ff] font-bold">₹${currentStation.rate}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      updateBottomBar();
+    }
+
+    function toggleSlot(slotId) {
+      if (selectedSlots.includes(slotId)) {
+        selectedSlots = selectedSlots.filter(id => id !== slotId);
+      } else {
+        selectedSlots.push(slotId);
+        selectedSlots.sort((a,b) => a - b);
+      }
+      renderSlots();
+    }
+
+    function selectStation(id, name, rate) {
+      currentStation = { id, name, rate };
+      ['ps5', 'pc', 'sim'].forEach(d => {
+        const el = document.getElementById(`p1-card-${d}`);
+        if (d === id) {
+          el.className = "group relative flex flex-col justify-between p-8 bg-[#0A0A0A] border-2 border-[#00e5ff] glow-cyan cursor-pointer transition-all duration-300";
+        } else {
+          el.className = "group relative flex flex-col justify-between p-8 bg-[#0A0A0A] border border-white/10 hover:border-white/30 cursor-pointer transition-all duration-300";
+        }
+      });
+      renderSlots();
+    }
+
+    function updateBottomBar() {
+      const bottomBar = document.getElementById('bottom-bar');
+      if (selectedSlots.length === 0 || currentPage === 3 || currentPortal === 'admin') {
+        bottomBar.classList.add('translate-y-full');
+        return;
+      }
+      bottomBar.classList.remove('translate-y-full');
+
+      const rigTotal = selectedSlots.length * currentStation.rate;
+      const remoteTotal = (playerCount > 1) ? (playerCount - 1) * 50 : 0;
+      const snacksTotal = snacks.reduce((sum, s) => sum + (s.price * s.qty), 0);
+      const totalAmount = rigTotal + remoteTotal + snacksTotal;
+
+      document.getElementById('bar-station-title').innerText = currentStation.name;
+      document.getElementById('bar-hours-pill').innerText = `${selectedSlots.length} HOURS ALLOCATED`;
+      document.getElementById('bar-total-amount').innerText = `₹${totalAmount}`;
+
+      const firstSlot = allSlots.find(s => s.id === selectedSlots[0]);
+      const lastSlot = allSlots.find(s => s.id === selectedSlots[selectedSlots.length - 1]);
+      const startStr = firstSlot ? firstSlot.label.split('-')[0].trim() : '15:00';
+      const endStr = lastSlot ? lastSlot.label.split('-')[1].trim() : '17:00';
+      document.getElementById('bar-slots-desc').innerText = `${startStr}:00 - ${endStr}:00 · TODAY, NOV 07`;
+
+      if (currentPage === 1) {
+        document.getElementById('bar-btn-text').innerText = "NEXT: CONFIGURE GAMES ➔";
+      } else if (currentPage === 2) {
+        document.getElementById('bar-btn-text').innerText = "PROCEED TO INVOICE & PAY ➔";
+      }
+    }
+
+    // ==========================================
+    // PAGE 2: GAMES, GUESTS & FOOD
+    // ==========================================
+    function setPlayerCount(count) {
+      playerCount = count;
+      [1, 2, 3, 4].forEach(c => {
+        const btn = document.getElementById(`guest-btn-${c}`);
+        if (c === count) {
+          btn.className = "p-4 border-2 border-[#00e5ff] bg-[#00e5ff]/10 text-left transition glow-cyan";
+        } else {
+          btn.className = "p-4 border border-white/10 text-left hover:border-white/30 transition";
+        }
+      });
+      const extraFee = (count > 1) ? (count - 1) * 50 : 0;
+      document.getElementById('p2-remote-badge').innerText = `${count} REMOTES SELECTED (+₹${extraFee})`;
+      updateBottomBar();
+    }
+
+    function renderGames() {
+      const container = document.getElementById('p2-games-container');
+      container.innerHTML = availableGames.map(game => {
+        const isSelected = selectedGames.includes(game.id);
+        return `
+          <div onclick="toggleGame('${game.id}')" class="group bg-[#0A0A0A] border ${isSelected ? 'border-[#00e5ff] glow-cyan' : 'border-white/10'} hover:border-white/40 cursor-pointer transition flex flex-col justify-between">
+            <div class="h-32 w-full overflow-hidden relative">
+              <img src="${game.cover}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent"></div>
+              ${isSelected ? '<span class="absolute top-2 right-2 bg-[#00e5ff] text-black font-mono font-bold text-[9px] px-2 py-0.5">READY</span>' : ''}
+            </div>
+            <div class="p-3 font-mono">
+              <div class="text-[9px] text-[#00e5ff] font-bold">${game.genre}</div>
+              <div class="font-display text-xs font-bold text-white mt-0.5 truncate">${game.title}</div>
+              <div class="text-[10px] text-white/50 mt-1">${game.players}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('p2-games-count-label').innerText = `${selectedGames.length} TITLES SELECTED`;
+    }
+
+    function toggleGame(id) {
+      if (selectedGames.includes(id)) selectedGames = selectedGames.filter(g => g !== id);
+      else selectedGames.push(id);
+      renderGames();
+    }
+
+    function togglePersonalPSN() {
+      personalPSN = document.getElementById('personal-psn-toggle').checked;
+    }
+
+    function renderSnacks() {
+      const container = document.getElementById('p2-snacks-container');
+      container.innerHTML = snacks.map(item => `
+        <div class="p-4 bg-[#0D0E15] border border-white/10 flex items-center justify-between font-mono">
+          <div>
+            <div class="font-display text-xs font-bold text-white">${item.name}</div>
+            <div class="text-[10px] text-white/40">${item.tag}</div>
+            <div class="text-xs font-bold text-[#00e5ff] mt-1">₹${item.price}</div>
+          </div>
+          <div class="flex items-center gap-2 bg-black p-1 border border-white/10">
+            <button onclick="changeSnack('${item.id}', -1)" class="w-6 h-6 border border-white/20 text-white font-bold text-xs flex items-center justify-center hover:bg-white/10">-</button>
+            <span class="text-xs font-bold text-white w-4 text-center">${item.qty}</span>
+            <button onclick="changeSnack('${item.id}', 1)" class="w-6 h-6 bg-[#00e5ff] text-black font-bold text-xs flex items-center justify-center hover:bg-white">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changeSnack(id, delta) {
+      const item = snacks.find(s => s.id === id);
+      if (item) item.qty = Math.max(0, item.qty + delta);
+      renderSnacks();
+      updateBottomBar();
+    }
+
+    // ==========================================
+    // PAGE 3: FULL ITEMIZED INVOICE & PASS LOGIC
+    // ==========================================
+    function updatePage3Bill() {
+      const rigHours = selectedSlots.length;
+      const rigCost = rigHours * currentStation.rate;
+      const remoteCost = (playerCount > 1) ? (playerCount - 1) * 50 : 0;
+      const snacksCost = snacks.reduce((sum, s) => sum + (s.price * s.qty), 0);
+      const grossTotal = rigCost + remoteCost + snacksCost;
+
+      const firstSlot = allSlots.find(s => s.id === selectedSlots[0]);
+      const lastSlot = allSlots.find(s => s.id === selectedSlots[selectedSlots.length - 1]);
+      const startStr = firstSlot ? firstSlot.label.split('-')[0].trim() : '15:00';
+      const endStr = lastSlot ? lastSlot.label.split('-')[1].trim() : '17:00';
+
+      // Update Bill metadata
+      document.getElementById('bill-station-val').innerText = currentStation.name;
+      document.getElementById('bill-time-val').innerText = `${startStr}:00 - ${endStr}:00 (${rigHours}.0 HOURS)`;
+      
+      const gameTitles = selectedGames.map(id => availableGames.find(g => g.id === id)?.title).filter(Boolean).join(', ');
+      document.getElementById('bill-games-val').innerText = gameTitles || 'DEFAULT PS5 GAMES';
+      document.getElementById('bill-login-val').innerText = personalPSN ? 'PERSONAL PSN ACCOUNT LOGIN' : 'CAFE DEFAULT PROFILE';
+
+      // Extra remotes row
+      document.getElementById('bill-remote-charge').innerText = `₹${remoteCost}.00`;
+
+      // Render Itemized Drinks in Bill
+      const drinksContainer = document.getElementById('bill-drinks-container');
+      const selectedDrinks = snacks.filter(s => s.qty > 0);
+      if (selectedDrinks.length > 0) {
+        drinksContainer.innerHTML = selectedDrinks.map(s => `
+          <div class="flex justify-between text-white/80">
+            <span>• ${s.name} (x${s.qty})</span>
+            <span class="text-white font-bold">₹${s.price * s.qty}.00</span>
+          </div>
+        `).join('');
+      } else {
+        drinksContainer.innerHTML = `
+          <div class="flex justify-between text-white/40">
+            <span>• REFRESHMENTS / SNACKS:</span>
+            <span>NONE PRE-ORDERED</span>
+          </div>
+        `;
+      }
+
+      // Pass logic (Strict rule: Pass waives station hours time cost only)
+      const passToggle = document.getElementById('p3-pass-toggle');
+      passRedeemed = passToggle.checked;
+
+      const passStatusText = document.getElementById('bill-pass-status-text');
+      const passWaiveNum = document.getElementById('bill-pass-waive-num');
+      const passDiscountRow = document.getElementById('bill-pass-discount-row');
+      const passBadge = document.getElementById('bill-pass-badge');
+
+      let finalPayable = 0;
+      if (passRedeemed) {
+        passStatusText.classList.remove('hidden');
+        passStatusText.innerText = `PAID BY PASS: YES (-₹${rigCost}.00 WAIVED)`;
+        passWaiveNum.classList.remove('hidden');
+        passWaiveNum.innerText = `-₹${rigCost}.00`;
+        passDiscountRow.classList.remove('hidden');
+        document.getElementById('bill-pass-deduction').innerText = `-₹${rigCost}.00`;
+        passBadge.innerText = `YES (${rigHours} HOURS)`;
+        passBadge.className = "text-[#d800ff]";
+
+        // Net due is remotes + drinks
+        finalPayable = remoteCost + snacksCost;
+      } else {
+        passStatusText.classList.add('hidden');
+        passWaiveNum.classList.add('hidden');
+        passDiscountRow.classList.add('hidden');
+        passBadge.innerText = "NO (FULL UPI)";
+        passBadge.className = "text-white/60";
+
+        finalPayable = grossTotal;
+      }
+
+      document.getElementById('bill-gross-total').innerText = `₹${grossTotal}.00`;
+      document.getElementById('bill-net-due').innerText = `₹${finalPayable}.00`;
+
+      // Update UPI QR Code
+      const qrEl = document.getElementById('p3-upi-qr');
+      qrEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=upi://pay?pa=nexusgaming@okhdfcbank&pn=NexusGaming&am=${finalPayable}&cu=INR`;
+    }
+
+    function togglePass() {
+      updatePage3Bill();
+    }
+
+    // ==========================================
+    // DETAILED INVOICE MODAL (WITH PRINT PREVIEW)
+    // ==========================================
+    function openPrintableBill() {
+      const rigHours = selectedSlots.length;
+      const rigCost = rigHours * currentStation.rate;
+      const remoteCost = (playerCount > 1) ? (playerCount - 1) * 50 : 0;
+      const snacksCost = snacks.reduce((sum, s) => sum + (s.price * s.qty), 0);
+      const grossTotal = rigCost + remoteCost + snacksCost;
+
+      const firstSlot = allSlots.find(s => s.id === selectedSlots[0]);
+      const lastSlot = allSlots.find(s => s.id === selectedSlots[selectedSlots.length - 1]);
+      const startStr = firstSlot ? firstSlot.label.split('-')[0].trim() : '15:00';
+      const endStr = lastSlot ? lastSlot.label.split('-')[1].trim() : '17:00';
+
+      document.getElementById('inv-modal-rig').innerText = currentStation.name;
+      document.getElementById('inv-modal-time').innerText = `TIME: ${startStr}:00 - ${endStr}:00 (${rigHours}.0 HRS)`;
+      const gameTitles = selectedGames.map(id => availableGames.find(g => g.id === id)?.title).filter(Boolean).join(', ');
+      document.getElementById('inv-modal-games').innerText = gameTitles || 'DEFAULT PS5 GAMES';
+      document.getElementById('inv-modal-login').innerText = personalPSN ? 'PERSONAL PSN ACCOUNT LOGIN' : 'CAFE DEFAULT PROFILE';
+
+      // Build Items table
+      const tbody = document.getElementById('inv-modal-items-tbody');
+      let rows = `
+        <tr class="py-2">
+          <td class="py-2.5 font-bold text-white">${currentStation.name}</td>
+          <td class="py-2.5 text-center">${rigHours} Hours</td>
+          <td class="py-2.5 text-right">₹${currentStation.rate}.00</td>
+          <td class="py-2.5 text-right font-bold text-white">₹${rigCost}.00</td>
+        </tr>
+      `;
+
+      if (playerCount > 1) {
+        rows += `
+          <tr class="py-2">
+            <td class="py-2.5 text-white/80">Extra DualSense Controller (${playerCount - 1}x extra)</td>
+            <td class="py-2.5 text-center">${playerCount - 1} Unit</td>
+            <td class="py-2.5 text-right">₹50.00</td>
+            <td class="py-2.5 text-right font-bold text-white">₹${remoteCost}.00</td>
+          </tr>
+        `;
+      }
+
+      snacks.filter(s => s.qty > 0).forEach(s => {
+        rows += `
+          <tr class="py-2">
+            <td class="py-2.5 text-white/80">${s.name}</td>
+            <td class="py-2.5 text-center">${s.qty}</td>
+            <td class="py-2.5 text-right">₹${s.price}.00</td>
+            <td class="py-2.5 text-right font-bold text-white">₹${s.price * s.qty}.00</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rows;
+
+      document.getElementById('inv-modal-gross').innerText = `₹${grossTotal}.00`;
+      
+      const passDiscountEl = document.getElementById('inv-modal-pass-discount');
+      let finalPayable = 0;
+      if (passRedeemed) {
+        passDiscountEl.innerText = `-₹${rigCost}.00 (WAIVED)`;
+        finalPayable = remoteCost + snacksCost;
+      } else {
+        passDiscountEl.innerText = `₹0.00 (NOT APPLIED)`;
+        finalPayable = grossTotal;
+      }
+
+      document.getElementById('inv-modal-net-extras').innerText = `₹${remoteCost + snacksCost}.00`;
+      document.getElementById('inv-modal-final-upi').innerText = `₹${finalPayable}.00`;
+
+      document.getElementById('invoice-modal').classList.remove('hidden');
+      document.getElementById('invoice-modal').classList.add('flex');
+    }
+
+    function closeInvoiceModal() {
+      document.getElementById('invoice-modal').classList.add('hidden');
+      document.getElementById('invoice-modal').classList.remove('flex');
+    }
+
+    function confirmBooking() {
+      openPrintableBill();
+    }
+
+    // INITIAL RENDER
+    renderSlots();
+  </script>
+</body>
+</html>
